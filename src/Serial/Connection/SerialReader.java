@@ -6,6 +6,8 @@ import java.io.InputStream;
 
 public class SerialReader implements Runnable
 {
+    private byte[] returnSig = {13, 10};
+
     private InputStream inputStream;
 
     private Connection parentConnection;
@@ -28,7 +30,7 @@ public class SerialReader implements Runnable
             {
                 if(inputStream.available() > 0)
                 {
-                    length = inputStream.read(buffer);
+                    length = this.inputStream.read(buffer);
                     if (length > -1)
                     {
                         for (int i = 0; i < length; i++)
@@ -36,7 +38,7 @@ public class SerialReader implements Runnable
                             tmpByte = buffer[i];
                             if(tmpByte < 0)
                             {
-                                tmpByte += 256;
+                                tmpByte += 255;
                             }
                             if (tmpByte != parentConnection.endChar)
                             {

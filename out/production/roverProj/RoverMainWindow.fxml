@@ -30,7 +30,7 @@
       <TextField fx:id="moveDistanceField" layoutX="989.0" layoutY="38.0" prefHeight="25.0" prefWidth="163.0" />
       <Label fx:id="distLabel" layoutX="909.0" layoutY="36.0" prefHeight="29.0" prefWidth="67.0" text="Distance">
          <font>
-            <Font size="17.0" />
+            <Font size="15.0" />
          </font>
       </Label>
       <Button fx:id="scanButton" layoutX="909.0" layoutY="258.0" mnemonicParsing="false" onAction="#scanCommand" prefHeight="25.0" prefWidth="243.0" text="Scan for Objects">

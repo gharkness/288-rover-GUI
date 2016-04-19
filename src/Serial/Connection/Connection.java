@@ -45,15 +45,18 @@ public class Connection
     /**
      * Amount of bytes that make up the command
      */
-    //private final static int commandSize = 3;
+    private final static int commandSize = 3;
 
     public Connection(String portName)
     {
         connectionActive = false;
         connectionClosed = false;
 
+        this.portName = portName;
+
         numTempBytes = 0;
         tempBytes = new int[1024];
+
     }
 
     public void setConnectionClosed(boolean boolVal)
@@ -178,9 +181,9 @@ public class Connection
     {
         byte[] comm = ConvertToASCII.convertForTransmit(command);
         boolean wasSuccessful = true;
-        for (int i = 0; i < comm.length; i++)
+        for (int i = 0; i < commandSize; i++)
         {
-            if (comm[i] == endChar)
+            if (command.charAt(i) == endChar)
             {
                 wasSuccessful = false;
                 break;
@@ -190,7 +193,7 @@ public class Connection
         {
             try
             {
-                for (int i = 0; i < command.length(); i++)
+                for (int i = 0; i < commandSize; i++)
                 {
                     outputStream.write(comm[i]);
                 }
@@ -202,6 +205,15 @@ public class Connection
                 disconnect();
             }
         }
+        try
+        {
+            System.out.println(inputStream.available());
+        }
+        catch (IOException e)
+        {
+
+        }
+
         return wasSuccessful;
     }
 

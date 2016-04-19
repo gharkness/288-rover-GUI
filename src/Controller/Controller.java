@@ -98,6 +98,7 @@ public class Controller
         {
             serialConnection = new Connection(scannedSerialPorts.getSelectionModel().getSelectedItem());
             serialConnection.connect();
+            System.out.println(serialConnection.getOutputStream());
         }
     }
 
@@ -119,11 +120,18 @@ public class Controller
 
         if (e.getSource() == forwardButton)
         {
-            Forward cmd = new Forward(Integer.parseInt(moveDistanceField.getText()));
+            int dist = Integer.parseInt(moveDistanceField.getText());
+            if (dist < 10)
+            {
+                dist = 10;
+            }
+
+            Forward cmd = new Forward(Integer.parseInt(Integer.toString(dist)));
             moveDistanceField.clear();
             commandList.add(cmd.toString());
             System.out.println(cmd.getCommand());
             cmdViewBox.appendText(cmd.getCommand() + '\n');
+            sendCommand(cmd.getCommand());
         }
         else if (e.getSource() == backwardButton)
         {
@@ -132,6 +140,7 @@ public class Controller
             commandList.add(cmd.toString());
             System.out.println(cmd.getCommand());
             cmdViewBox.appendText(cmd.getCommand() + '\n');
+            sendCommand(cmd.getCommand());
         }
         else if (e.getSource() == forwardNoNavButton)
         {
@@ -140,6 +149,7 @@ public class Controller
             commandList.add(cmd.toString());
             System.out.println(cmd.getCommand());
             cmdViewBox.appendText(cmd.getCommand() + '\n');
+            sendCommand(cmd.getCommand());
         }
         else if (e.getSource() == backNoNavButton)
         {
@@ -148,6 +158,7 @@ public class Controller
             commandList.add(cmd.toString());
             System.out.println(cmd.getCommand());
             cmdViewBox.appendText(cmd.getCommand() + '\n');
+            sendCommand(cmd.getCommand());
         }
     }
 
@@ -160,7 +171,9 @@ public class Controller
 
         commandList.add(cmd.getCommand());
 
-        cmdViewBox.appendText(cmd.getCommand() + '\n');
+        cmdViewBox.appendText("Scan" + '\n');
+
+        sendCommand(cmd.getCommand());
     }
 
     @FXML
@@ -170,26 +183,14 @@ public class Controller
     }
 
     @FXML
-    private void onClicked()
-    {
-        try
-        {
-            Thread.sleep(1000);
-        }
-        catch (InterruptedException e)
-        {}
-        serialConnection.send("command");
-    }
-
-    @FXML
-    private void offClicked()
+    private void sendCommand(String command)
     {
         try
         {
             Thread.sleep(1000);
         }
         catch (InterruptedException e){}
-
-        serialConnection.send("f10");
+        serialConnection.send(command);
     }
+
 }
