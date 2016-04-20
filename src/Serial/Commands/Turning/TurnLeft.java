@@ -5,7 +5,7 @@ import Serial.Commands.ICommand;
 
 public class TurnLeft implements ICommand
 {
-    private int angle;
+    private final int angle;
 
     private String command = "l";
 

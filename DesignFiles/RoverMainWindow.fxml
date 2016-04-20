@@ -54,7 +54,7 @@
             <Font size="15.0" />
          </font>
       </Button>
-      <TextArea fx:id="logBox" layoutX="26.0" layoutY="146.0" prefHeight="628.0" prefWidth="234.0" scrollLeft="1.0" />
+      <TextArea fx:id="logBox" layoutX="26.0" layoutY="146.0" prefHeight="628.0" prefWidth="234.0" scrollLeft="1.0" wrapText="true" />
       <TextArea fx:id="cmdViewBox" layoutX="909.0" layoutY="374.0" prefHeight="372.0" prefWidth="243.0" />
       <Label fx:id="angleLabel" layoutX="911.0" layoutY="135.0" prefHeight="29.0" prefWidth="55.0" text="Angle" textAlignment="CENTER">
          <font>
@@ -77,10 +77,9 @@
             <Font size="15.0" />
          </font>
       </Button>
-      <Pane layoutX="278.0" layoutY="63.0" prefHeight="552.0" prefWidth="614.0" style="-fx-background-image:url(/marsSurface.jpg)" >
-         <children>
-            <Canvas fx:id="roverCanvas" height="552.0" width="614.0" />
-         </children>
-      </Pane>
+          <Pane layoutX="278.0" layoutY="63.0" prefHeight="400.0" prefWidth="600.0"
+                style="-fx-background-image:url(/marsGrid.jpg)">
+              <Canvas fx:id="roverCanvas" height="400.0" width="600.0"/>
+          </Pane>
       </AnchorPane>
 </VBox>

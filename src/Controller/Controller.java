@@ -80,7 +80,7 @@ public class Controller
     @FXML
     private void initialize()
     {
-        commandList = new ArrayList<String>();
+        commandList = new ArrayList<>();
 
         scannedSerialPorts.setItems(ConnectionUtil.scanForPorts());
 
@@ -260,7 +260,7 @@ public class Controller
         {
             Thread.sleep(250);
         }
-        catch (InterruptedException e){}
+        catch (InterruptedException ignored){}
     }
 
 }

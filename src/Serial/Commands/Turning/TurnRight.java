@@ -4,7 +4,7 @@ import Serial.Commands.ICommand;
 
 public class TurnRight implements ICommand
 {
-    private int angle;
+    private final int angle;
 
     private String command = "r";
 

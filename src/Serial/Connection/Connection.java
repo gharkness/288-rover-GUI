@@ -31,8 +31,8 @@ public class Connection implements SerialPortEventListener
      * Signifies the end of the command being transmitted.
      * Most likely <ENTER>, or '\r'
      */
-    public final static byte endChar = 10;
-    //  TODO change endchar to '\r' and set serial parameters back to iRobot settings
+    public final static byte endChar = 13;
+
 
     /**
      * Amount of bytes that make up the command
@@ -84,10 +84,10 @@ public class Connection implements SerialPortEventListener
                 }
 
                 //  ARDUINO
-                serialPort.setSerialPortParams(9600, 8, 1, 0);
+                //serialPort.setSerialPortParams(9600, 8, 1, 0);
 
                 //  Rover
-                //serialPort.setSerialPortParams(57600, 8, 2, 0);
+                serialPort.setSerialPortParams(57600, 8, 2, 0);
 
                 inputStream = serialPort.getInputStream();
                 outputStream = serialPort.getOutputStream();
@@ -99,19 +99,10 @@ public class Connection implements SerialPortEventListener
                 return true;
             }
         }
-        catch (NoSuchPortException e)
+        catch (NoSuchPortException | PortInUseException | IOException e)
         {
             e.printStackTrace();
-        }
-        catch (PortInUseException e)
-        {
-            e.printStackTrace();
-        }
-        catch (UnsupportedCommOperationException e)
-        {
-            e.printStackTrace();
-        }
-        catch (IOException e)
+        } catch (UnsupportedCommOperationException e)
         {
             e.printStackTrace();
         }
@@ -135,14 +126,14 @@ public class Connection implements SerialPortEventListener
         return false;
     }
 
-    public void setSerialListener()
+    private void setSerialListener()
     {
         try
         {
             serialPort.addEventListener(this);
             serialPort.notifyOnDataAvailable(true);
         }
-        catch (TooManyListenersException e){}
+        catch (TooManyListenersException ignored){}
     }
 
     public boolean isConnectionActive()
@@ -205,8 +196,9 @@ public class Connection implements SerialPortEventListener
                     break;
                 }
             }
-            catch (Exception e) {}
+            catch (Exception ignored) {}
         }
         parent.writeToLogBox(data + '\n');
+        parent.writeToLogBox("\n");
     }
 }
