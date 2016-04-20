@@ -1,4 +1,4 @@
-package Serial.Connection;
+package Serial.Connection.GeneralUtil;
 
 import gnu.io.CommPortIdentifier;
 import javafx.collections.FXCollections;

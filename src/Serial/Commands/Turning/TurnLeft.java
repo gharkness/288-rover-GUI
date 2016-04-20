@@ -1,7 +1,9 @@
 package Serial.Commands.Turning;
 
 
-public class TurnLeft
+import Serial.Commands.ICommand;
+
+public class TurnLeft implements ICommand
 {
     private int angle;
 
@@ -11,6 +13,11 @@ public class TurnLeft
     {
         this.angle = angle;
         command += this.angle;
+    }
+
+    public int getAngle()
+    {
+        return this.angle;
     }
 
     public String getCommand()

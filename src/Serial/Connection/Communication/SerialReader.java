@@ -1,13 +1,9 @@
-package Serial.Connection;
+package Serial.Connection.Communication;
 
 
-import java.io.IOException;
-import java.io.InputStream;
-
+/*
 public class SerialReader implements Runnable
 {
-    private byte[] returnSig = {13, 10};
-
     private InputStream inputStream;
 
     private Connection parentConnection;
@@ -22,7 +18,7 @@ public class SerialReader implements Runnable
     public void run()
     {
         byte[] buffer = new byte[1024];
-        int length = -1;
+        int length = 0;
         int tmpByte;
         try
         {
@@ -30,7 +26,7 @@ public class SerialReader implements Runnable
             {
                 if(inputStream.available() > 0)
                 {
-                    length = this.inputStream.read(buffer);
+                    length = parentConnection.getInputStream().read(buffer);
                     if (length > -1)
                     {
                         for (int i = 0; i < length; i++)
@@ -38,7 +34,7 @@ public class SerialReader implements Runnable
                             tmpByte = buffer[i];
                             if(tmpByte < 0)
                             {
-                                tmpByte += 255;
+                                tmpByte += 256;
                             }
                             if (tmpByte != parentConnection.endChar)
                             {
@@ -66,3 +62,4 @@ public class SerialReader implements Runnable
         }
     }
 }
+*/

@@ -1,6 +1,8 @@
 package Serial.Commands.Movement;
 
-public class Backward extends Movements
+import Serial.Commands.ICommand;
+
+public class Backward implements ICommand
 {
     private String command = "b";
 
@@ -10,6 +12,11 @@ public class Backward extends Movements
     {
         this.distance = distance;
         command += distance;
+    }
+
+    public int getDistance()
+    {
+        return distance;
     }
 
     @Override

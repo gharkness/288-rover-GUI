@@ -2,11 +2,11 @@ package Controller;
 
 import Serial.Commands.General.Scan;
 import Serial.Commands.Movement.Backward;
-import Serial.Commands.Movement.BackwardNoNavigation;
 import Serial.Commands.Movement.Forward;
-import Serial.Commands.Movement.ForwardNoNavigation;
+import Serial.Commands.Turning.TurnLeft;
+import Serial.Commands.Turning.TurnRight;
 import Serial.Connection.Connection;
-import Serial.Connection.ConnectionUtil;
+import Serial.Connection.GeneralUtil.ConnectionUtil;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -61,6 +61,18 @@ public class Controller
     @FXML
     private ArrayList<String> commandList;
 
+    @FXML
+    private Button rotLeftButton;
+
+    @FXML
+    private Button rotRightButton;
+
+    @FXML
+    private TextField angleTextField;
+
+    @FXML
+    private TextArea logBox;
+
     private Connection serialConnection;
 
     private boolean portNameFlag;
@@ -96,15 +108,27 @@ public class Controller
         }
         else
         {
-            serialConnection = new Connection(scannedSerialPorts.getSelectionModel().getSelectedItem());
+            serialConnection = new Connection(scannedSerialPorts.getSelectionModel().getSelectedItem(), this);
             serialConnection.connect();
-            System.out.println(serialConnection.getOutputStream());
+            if (serialConnection.isConnectionActive())
+            {
+                cmdViewBox.appendText("Connection was successful.\n");
+            }
+            else
+            {
+                cmdViewBox.appendText("Unable to connect. Please try again.");
+            }
         }
     }
 
     @FXML
     private void moveCommand(ActionEvent e)
     {
+        if (serialConnection == null)
+        {
+            return;
+        }
+
         if (moveDistanceField.getText().length() == 0)
         {
             return;
@@ -118,56 +142,82 @@ public class Controller
             }
         }
 
+        int dist = Math.max(10, Integer.parseInt(moveDistanceField.getText()));
+
         if (e.getSource() == forwardButton)
         {
-            int dist = Integer.parseInt(moveDistanceField.getText());
-            if (dist < 10)
-            {
-                dist = 10;
-            }
-
-            Forward cmd = new Forward(Integer.parseInt(Integer.toString(dist)));
+            Forward cmd = new Forward(dist);
             moveDistanceField.clear();
             commandList.add(cmd.toString());
-            System.out.println(cmd.getCommand());
-            cmdViewBox.appendText(cmd.getCommand() + '\n');
+            cmdViewBox.appendText("Moving Forward " + cmd.getDistance() + " cm " + '\n');
             sendCommand(cmd.getCommand());
         }
         else if (e.getSource() == backwardButton)
         {
-            Backward cmd = new Backward(Integer.parseInt(moveDistanceField.getText()));
+            Backward cmd = new Backward(dist);
             moveDistanceField.clear();
             commandList.add(cmd.toString());
-            System.out.println(cmd.getCommand());
-            cmdViewBox.appendText(cmd.getCommand() + '\n');
+            cmdViewBox.appendText("Moving Backward " + cmd.getDistance() + " cm " + '\n');
             sendCommand(cmd.getCommand());
         }
-        else if (e.getSource() == forwardNoNavButton)
+    }
+
+    @FXML
+    private void turnCommand(ActionEvent e)
+    {
+        if (serialConnection == null)
         {
-            ForwardNoNavigation cmd = new ForwardNoNavigation(Integer.parseInt(moveDistanceField.getText()));
-            moveDistanceField.clear();
-            commandList.add(cmd.toString());
-            System.out.println(cmd.getCommand());
-            cmdViewBox.appendText(cmd.getCommand() + '\n');
-            sendCommand(cmd.getCommand());
+            return;
         }
-        else if (e.getSource() == backNoNavButton)
+
+        if (angleTextField.getText().length() == 0)
         {
-            BackwardNoNavigation cmd = new BackwardNoNavigation(Integer.parseInt(moveDistanceField.getText()));
-            moveDistanceField.clear();
-            commandList.add(cmd.toString());
-            System.out.println(cmd.getCommand());
-            cmdViewBox.appendText(cmd.getCommand() + '\n');
+            return;
+        }
+
+        for (int i = 0; i < angleTextField.getText().length(); i++)
+        {
+            if (!Character.isDigit(angleTextField.getText().charAt(i)))
+            {
+                return;
+            }
+        }
+
+        int angle = Math.max(10, Integer.parseInt(angleTextField.getText()));
+
+        if (e.getSource() == rotLeftButton)
+        {
+            TurnLeft cmd = new TurnLeft(angle);
+            angleTextField.clear();
+            commandList.add(cmd.getCommand());
+            cmdViewBox.appendText("Turn left " + cmd.getAngle() + " degrees.\n");
             sendCommand(cmd.getCommand());
         }
+        else if (e.getSource() == rotRightButton)
+        {
+            TurnRight cmd = new TurnRight(angle);
+            angleTextField.clear();
+            commandList.add(cmd.getCommand());
+            cmdViewBox.appendText("Turn right " + cmd.getAngle() + " degrees.\n");
+            sendCommand(cmd.getCommand());
+        }
+    }
+
+    @FXML
+    private void playSong()
+    {
+        if (serialConnection == null || !serialConnection.isConnectionActive())
+        {
+            return;
+        }
+        sendCommand("pla");
+        cmdViewBox.appendText("Play song\n");
     }
 
     @FXML
     private void scanCommand()
     {
         Scan cmd = new Scan();
-
-        System.out.println(cmd.getCommand());
 
         commandList.add(cmd.getCommand());
 
@@ -177,20 +227,40 @@ public class Controller
     }
 
     @FXML
+    private void stopClicked()
+    {
+        serialConnection.disconnect();
+        if (!serialConnection.isConnectionActive())
+        {
+            cmdViewBox.appendText("Connection was disconnected.\n");
+        }
+        else
+        {
+            cmdViewBox.appendText("Unable to disconnect.\n");
+        }
+    }
+
+    @FXML
     private void portScanClicked()
     {
         scannedSerialPorts.setItems(ConnectionUtil.scanForPorts());
     }
 
     @FXML
+    public void writeToLogBox(String dataString)
+    {
+        logBox.appendText(dataString);
+    }
+
+    @FXML
     private void sendCommand(String command)
     {
+        serialConnection.send(command);
         try
         {
-            Thread.sleep(1000);
+            Thread.sleep(250);
         }
         catch (InterruptedException e){}
-        serialConnection.send(command);
     }
 
 }

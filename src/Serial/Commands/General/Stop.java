@@ -1,6 +1,8 @@
 package Serial.Commands.General;
 
-public class Stop
+import Serial.Commands.ICommand;
+
+public class Stop implements ICommand
 {
    private final String command = "x";
 

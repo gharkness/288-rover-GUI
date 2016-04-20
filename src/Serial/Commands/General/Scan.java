@@ -1,6 +1,8 @@
 package Serial.Commands.General;
 
-public class Scan
+import Serial.Commands.ICommand;
+
+public class Scan implements ICommand
 {
     private final String command = "sca";
 

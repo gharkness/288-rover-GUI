@@ -1,28 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <VBox fx:id="mainWindow" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.Controller">
       <AnchorPane prefHeight="814.0" prefWidth="1200.0">
-            <ChoiceBox fx:id="scannedSerialPorts" layoutX="89.0" layoutY="14.0" prefHeight="29.0" prefWidth="75.0" />
-            <Label layoutX="14.0" layoutY="14.0" prefHeight="29.0" prefWidth="75.0" text="COM Port">
+            <ChoiceBox fx:id="scannedSerialPorts" layoutX="134.0" layoutY="14.0" prefHeight="29.0" prefWidth="123.0" />
+            <Label layoutX="24.0" layoutY="14.0" prefHeight="29.0" prefWidth="107.0" text="COM Port">
                <font>
                   <Font size="15.0" />
                </font>
             </Label>
-            <Button fx:id="portScanButton" layoutX="13.0" layoutY="50.0" mnemonicParsing="false" onAction="#portScanClicked" prefHeight="37.0" prefWidth="152.0" text="Scan for Ports">
+            <Button fx:id="portScanButton" layoutX="24.0" layoutY="51.0" mnemonicParsing="false" onAction="#portScanClicked" prefHeight="37.0" prefWidth="234.0" text="Scan for Ports">
                <font>
                   <Font size="16.0" />
                </font>
             </Button>
-      <Button fx:id="setCommButton" layoutX="13.0" layoutY="94.0" mnemonicParsing="false" onAction="#connectionButtonClicked" prefHeight="37.0" prefWidth="152.0" text="Connect to Port">
+      <Button fx:id="setCommButton" layoutX="24.0" layoutY="98.0" mnemonicParsing="false" onAction="#connectionButtonClicked" prefHeight="37.0" prefWidth="234.0" text="Connect to Port">
          <font>
             <Font size="16.0" />
          </font>
@@ -33,12 +35,12 @@
             <Font size="15.0" />
          </font>
       </Label>
-      <Button fx:id="scanButton" layoutX="909.0" layoutY="258.0" mnemonicParsing="false" onAction="#scanCommand" prefHeight="25.0" prefWidth="243.0" text="Scan for Objects">
+      <Button fx:id="scanButton" layoutX="909.0" layoutY="282.0" mnemonicParsing="false" onAction="#scanCommand" prefHeight="25.0" prefWidth="243.0" text="Scan for Objects">
          <font>
             <Font size="15.0" />
          </font>
       </Button>
-      <Button fx:id="stopButton" layoutX="909.0" layoutY="307.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="243.0" style="-fx-background-color: Darkred;" text="STOP" textFill="WHITE">
+      <Button fx:id="stopButton" layoutX="909.0" layoutY="328.0" mnemonicParsing="false" onAction="#stopClicked" prefHeight="25.0" prefWidth="243.0" style="-fx-background-color: Darkred;" text="STOP" textFill="WHITE">
          <font>
             <Font name="System Bold" size="15.0" />
          </font>
@@ -52,16 +54,33 @@
             <Font size="15.0" />
          </font>
       </Button>
-      <Button fx:id="forwardNoNavButton" layoutX="909.0" layoutY="131.0" mnemonicParsing="false" onAction="#moveCommand" prefHeight="25.0" prefWidth="243.0" text="Forward Without Navigation">
+      <TextArea fx:id="logBox" layoutX="26.0" layoutY="146.0" prefHeight="628.0" prefWidth="234.0" scrollLeft="1.0" />
+      <TextArea fx:id="cmdViewBox" layoutX="909.0" layoutY="374.0" prefHeight="372.0" prefWidth="243.0" />
+      <Label fx:id="angleLabel" layoutX="911.0" layoutY="135.0" prefHeight="29.0" prefWidth="55.0" text="Angle" textAlignment="CENTER">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Label>
+      <TextField fx:id="angleTextField" layoutX="989.0" layoutY="137.0" prefHeight="25.0" prefWidth="163.0" />
+      <Button fx:id="rotLeftButton" layoutX="913.0" layoutY="180.0" mnemonicParsing="false" onAction="#turnCommand" prefHeight="31.0" prefWidth="107.0" text="Left">
          <font>
             <Font size="15.0" />
          </font>
       </Button>
-      <Button fx:id="backNoNavButton" layoutX="909.0" layoutY="182.0" mnemonicParsing="false" onAction="#moveCommand" prefHeight="25.0" prefWidth="243.0" text="Backward Without Navigation">
+      <Button fx:id="rotRightButton" layoutX="1045.0" layoutY="180.0" mnemonicParsing="false" onAction="#turnCommand" prefHeight="31.0" prefWidth="107.0" text="Right">
          <font>
             <Font size="15.0" />
          </font>
       </Button>
-      <TextArea fx:id="cmdViewBox" layoutX="909.0" layoutY="361.0" prefHeight="401.0" prefWidth="243.0" />
+      <Button fx:id="songButton" layoutX="914.0" layoutY="231.0" mnemonicParsing="false" onAction="#playSong" prefHeight="31.0" prefWidth="234.0" text="Play Song">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Button>
+      <Pane layoutX="278.0" layoutY="63.0" prefHeight="552.0" prefWidth="614.0" style="-fx-background-image:url(/marsSurface.jpg)" >
+         <children>
+            <Canvas fx:id="roverCanvas" height="552.0" width="614.0" />
+         </children>
+      </Pane>
       </AnchorPane>
 </VBox>

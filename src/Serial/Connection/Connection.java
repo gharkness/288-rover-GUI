@@ -1,18 +1,21 @@
 package Serial.Connection;
 
+import Controller.Controller;
+import Serial.Connection.GeneralUtil.ConvertToASCII;
 import gnu.io.*;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.TooManyListenersException;
 
-public class Connection
+public class Connection implements SerialPortEventListener
 {
+    private Controller parent;
+
     private InputStream inputStream;
 
     private OutputStream outputStream;
-
-    private Thread receiver;
 
     private SerialPort serialPort;
 
@@ -24,39 +27,26 @@ public class Connection
 
     private String portName;
 
-    private static int baudRate = 57600;
-
-    private static int parity = 0;
-
-    private static int dataBits = 8;
-
-    private static int stopBits = 2;
-
-    private int numTempBytes;
-
-    private int[] tempBytes;
-
     /**
      * Signifies the end of the command being transmitted.
      * Most likely <ENTER>, or '\r'
      */
-    public final static byte endChar = 13;
+    public final static byte endChar = 10;
+    //  TODO change endchar to '\r' and set serial parameters back to iRobot settings
 
     /**
      * Amount of bytes that make up the command
      */
     private final static int commandSize = 3;
 
-    public Connection(String portName)
+    public Connection(String portName, Controller parent)
     {
         connectionActive = false;
         connectionClosed = false;
 
         this.portName = portName;
 
-        numTempBytes = 0;
-        tempBytes = new int[1024];
-
+        this.parent = parent;
     }
 
     public void setConnectionClosed(boolean boolVal)
@@ -79,16 +69,6 @@ public class Connection
         return this.serialPort;
     }
 
-    public int getNumTempBytes()
-    {
-        return this.numTempBytes;
-    }
-
-    public int[] getTempBytes()
-    {
-        return this.tempBytes;
-    }
-
     public boolean connect()
     {
         try
@@ -103,15 +83,19 @@ public class Connection
                     System.out.println("null");
                 }
 
-                serialPort.setSerialPortParams(57600, 8, 2, 0);
+                //  ARDUINO
+                serialPort.setSerialPortParams(9600, 8, 1, 0);
+
+                //  Rover
+                //serialPort.setSerialPortParams(57600, 8, 2, 0);
 
                 inputStream = serialPort.getInputStream();
                 outputStream = serialPort.getOutputStream();
+                setSerialListener();
 
-                receiver = (new Thread(new SerialReader(inputStream, this)));
                 connectionClosed = false;
-                receiver.start();
                 connectionActive = true;
+
                 return true;
             }
         }
@@ -136,35 +120,29 @@ public class Connection
 
     public boolean disconnect()
     {
-        boolean disconnected = true;
-
-        connectionClosed = true;
-
         try
         {
-            receiver.join();
-        }
-        catch (InterruptedException e)
-        {
-            e.printStackTrace();
-            disconnected = true;
-        }
-
-        try
-        {
-            outputStream.close();
+            serialPort.removeEventListener();
             inputStream.close();
-        }
-        catch (IOException e)
+            outputStream.close();
+            connectionActive = false;
+            parent.writeToLogBox("Connection disconnected.\n");
+            return true;
+        } catch (Exception e)
         {
-            e.printStackTrace();
-            disconnected = false;
+            parent.writeToLogBox("Unable to disconnect.\n");
         }
+        return false;
+    }
 
-        serialPort.close();
-        connectionActive = false;
-
-        return disconnected;
+    public void setSerialListener()
+    {
+        try
+        {
+            serialPort.addEventListener(this);
+            serialPort.notifyOnDataAvailable(true);
+        }
+        catch (TooManyListenersException e){}
     }
 
     public boolean isConnectionActive()
@@ -205,51 +183,30 @@ public class Connection
                 disconnect();
             }
         }
-        try
-        {
-            System.out.println(inputStream.available());
-        }
-        catch (IOException e)
-        {
-
-        }
 
         return wasSuccessful;
     }
 
-    /*
-    private byte[] convertCommand(String command)
+    @Override
+    public void serialEvent(SerialPortEvent serialPortEvent)
     {
-        ArrayList converted = new ArrayList();
-
-        for (int i = 0; i < command.length(); i++)
+        String data = "";
+        while(serialPortEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE)
         {
-            if (command.charAt(i) > 255)
+            try
             {
-                converted.add(255);
-                continue;
+                byte streamChar = (byte)inputStream.read();
+                if (streamChar != endChar)
+                {
+                    data += new String(new byte[] {streamChar});
+                }
+                else
+                {
+                    break;
+                }
             }
-            else if(command.charAt(i) < 0)
-            {
-                converted.add(0);
-                continue;
-            }
-            else if (command.charAt(i) == endChar)
-            {
-                continue;
-            }
-            else
-            {
-                converted.add(command.charAt(i));
-            }
+            catch (Exception e) {}
         }
-
-        byte[] comm = new byte[converted.size()];
-        for (int i = 0; i < converted.size(); i++)
-        {
-            comm[i] = (byte)converted.get(i);
-        }
-        return comm;
+        parent.writeToLogBox(data + '\n');
     }
-    */
 }

@@ -1,6 +1,8 @@
 package Serial.Commands.Movement;
 
-public class Forward extends Movements
+import Serial.Commands.ICommand;
+
+public class Forward implements ICommand
 {
     private String command = "f";
 
@@ -12,7 +14,11 @@ public class Forward extends Movements
         command += distance;
     }
 
-    @Override
+    public int getDistance()
+    {
+        return this.distance;
+    }
+
     public String getCommand()
     {
         return this.command;
