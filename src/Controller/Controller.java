@@ -10,12 +10,11 @@ import Serial.Connection.Connection;
 import Serial.Connection.GeneralUtil.ConnectionUtil;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
-import javafx.scene.control.ToggleButton;
 
 import java.util.ArrayList;
 
@@ -73,10 +72,22 @@ public class Controller
     private Button rotRightButton;
 
     @FXML
+    private Canvas sketchPad;
+
+    @FXML
     private TextField angleTextField;
 
     @FXML
     private TextArea logBox;
+
+    @FXML
+    private Button eraseButton;
+
+    @FXML
+    private GraphicsContext canvasContext;
+
+    @FXML
+    private ColorPicker colorPicker;
 
     private Connection serialConnection;
 
@@ -93,6 +104,8 @@ public class Controller
 
         moveSelectBox.getItems().addAll("Forward", "Forward (No Navigation)", "Backward", "Backward (No Navigation)");
 
+        canvasContext = sketchPad.getGraphicsContext2D();
+
         setListeners();
     }
 
@@ -102,6 +115,27 @@ public class Controller
         scannedSerialPorts.getSelectionModel().selectedIndexProperty().addListener((v, o, n) -> {
             portNameFlag = true;
         });
+
+        sketchPad.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
+            canvasContext.beginPath();
+            canvasContext.moveTo(e.getX(), e.getY());
+            canvasContext.stroke();
+            canvasContext.closePath();
+        });
+
+        sketchPad.addEventHandler(MouseEvent.MOUSE_DRAGGED, e -> {
+            canvasContext.lineTo(e.getX(), e.getY());
+            canvasContext.stroke();
+        });
+
+        eraseButton.setOnAction( e -> {
+            canvasContext.clearRect(sketchPad.getScaleX(), sketchPad.getScaleY(), sketchPad.getWidth(), sketchPad.getHeight());
+        });
+
+        colorPicker.setOnAction( e -> {
+            canvasContext.setStroke(colorPicker.getValue());
+        });
+
     }
 
     @FXML
@@ -176,7 +210,7 @@ public class Controller
         }
 
         ToggleDetector cmd = new ToggleDetector();
-        cmdViewBox.appendText("Changing the color detector to red.\n");
+        cmdViewBox.appendText("Toggled the color detector.\n");
         sendCommand(cmd.command);
     }
 
