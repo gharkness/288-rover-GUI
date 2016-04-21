@@ -6,7 +6,7 @@ public class Forward implements ICommand
 {
     private String command = "f";
 
-    private final int distance;
+    private int distance;
 
     public Forward(int distance)
     {

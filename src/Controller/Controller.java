@@ -1,6 +1,7 @@
 package Controller;
 
 import Serial.Commands.General.Scan;
+import Serial.Commands.General.ToggleDetector;
 import Serial.Commands.Movement.Backward;
 import Serial.Commands.Movement.Forward;
 import Serial.Commands.Turning.TurnLeft;
@@ -14,6 +15,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
+import javafx.scene.control.ToggleButton;
 
 import java.util.ArrayList;
 
@@ -24,6 +26,9 @@ public class Controller
 
     @FXML
     private ChoiceBox<String> scannedSerialPorts;
+
+    @FXML
+    private ToggleButton toggleColorButton;
 
     @FXML
     private Button setCommButton;
@@ -160,6 +165,19 @@ public class Controller
             cmdViewBox.appendText("Moving Backward " + cmd.getDistance() + " cm " + '\n');
             sendCommand(cmd.getCommand());
         }
+    }
+
+    @FXML
+    private void toggleColorDetector()
+    {
+        if (serialConnection == null)
+        {
+            return;
+        }
+
+        ToggleDetector cmd = new ToggleDetector();
+        cmdViewBox.appendText("Changing the color detector to red.\n");
+        sendCommand(cmd.command);
     }
 
     @FXML
